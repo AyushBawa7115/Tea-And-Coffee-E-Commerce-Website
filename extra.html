@@ -1,0 +1,1455 @@
+<section class="hero-slider">
+    <div class="slider-container">
+        <div class="slider-wrapper">
+            <div class="slide">
+                <img src="images/black-coffee.jpg" alt="Premium Tea Collection">
+                <div class="slide-content">
+                    <h2>Premium Tea Collection</h2>
+                    <p>Discover our handpicked selection of the finest teas from around the world</p>
+                    <a href="#tea" class="btn">Shop Tea</a>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="images/latte.jpg" alt="Artisan Coffee Beans">
+                <div class="slide-content">
+                    <h2>Artisan Coffee Beans</h2>
+                    <p>Ethically sourced, freshly roasted coffee beans for the perfect brew</p>
+                    <a href="#coffee" class="btn">Shop Coffee</a>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="images/ginger-tea.png" alt="Exclusive Gift Sets">
+                <div class="slide-content">
+                    <h2>Exclusive Gift Sets</h2>
+                    <p>Curated gift sets for tea and coffee lovers</p>
+                    <a href="#gifts" class="btn">Shop Gifts</a>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="images/herbal-tea.jpg" alt="Brewing Accessories">
+                <div class="slide-content">
+                    <h2>Brewing Accessories</h2>
+                    <p>Everything you need to brew the perfect cup</p>
+                    <a href="#accessories" class="btn">Shop Accessories</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="script.js"></script>
+CREATE DATABASE teacoffee;
+- Users table
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    address TEXT,
+    city VARCHAR(50),
+    state VARCHAR(50),
+    zip_code VARCHAR(20),
+    phone VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Products table
+CREATE TABLE products (
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    rating DECIMAL(3, 1) DEFAULT 0,
+    category VARCHAR(50) NOT NULL,
+    stock INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Product images table
+CREATE TABLE product_images (
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    image_path VARCHAR(255) NOT NULL,
+    is_primary BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
+
+-- Product details table
+CREATE TABLE product_details (
+    detail_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    details TEXT NOT NULL,
+    instructions TEXT NOT NULL,
+    origin VARCHAR(100),
+    ingredients TEXT,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
+
+-- Cart table
+CREATE TABLE cart (
+    cart_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    UNIQUE KEY (user_id, product_id)
+);
+
+-- Wishlist table
+CREATE TABLE wishlist (
+    wishlist_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    UNIQUE KEY (user_id, product_id)
+);
+
+-- Orders table
+CREATE TABLE orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    shipping_address TEXT NOT NULL,
+    order_status ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
+    payment_method VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Order items table
+CREATE TABLE order_items (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
+INSERT INTO product_images (product_id, image_path, is_primary) VALUES
+-- Product 1
+(1, 'path_to_Assam.webp', TRUE),
+(1, 'path_to_Assam1.jpeg', FALSE),
+(1, 'path_to_Assam2.webp', FALSE),
+(1, 'path_to_Assam3.jpeg', FALSE),
+
+-- Product 2
+(2, 'path_to_yirga.jpeg', TRUE),
+(2, 'path_to_yirga2.jpg', FALSE),
+(2, 'path_to_yirga3.webp', FALSE),
+(2, 'path_to_yirga4.jpeg', FALSE),
+
+-- Product 3
+(3, 'path_to_green.jpg', TRUE),
+(3, 'path_to_japan.webp', FALSE),
+(3, 'path_to_japan2.jpg', FALSE),
+(3, 'path_to_japan3.jpg', FALSE),
+
+-- Product 4
+(4, 'path_to_colobium.webp', TRUE),
+(4, 'path_to_colobium1.webp', FALSE),
+(4, 'path_to_colobium2.webp', FALSE),
+(4, 'path_to_colobium3.webp', FALSE),
+
+-- Product 5
+(5, 'path_to_darjleeng.jpg', TRUE),
+(5, 'path_to_darjleeng1.webp', FALSE),
+(5, 'path_to_darjleeng2.webp', FALSE),
+(5, 'path_to_darjleeng3.jpg', FALSE),
+
+-- Product 6
+(6, 'path_to_earl.avif', TRUE),
+(6, 'path_to_earl1.webp', FALSE),
+(6, 'path_to_earl2.jpg', FALSE),
+(6, 'path_to_earl3.jpeg', FALSE),
+
+-- Product 7
+(7, 'path_to_herbal1.jpeg', TRUE),
+(7, 'path_to_herbal2.jpeg', FALSE),
+(7, 'path_to_herbal3.webp', FALSE),
+(7, 'path_to_herbal-tea.jpg', FALSE),
+
+-- Product 8
+(8, 'path_to_jasmeen.jpge', TRUE),
+(8, 'path_to_jasmeen1.jpg', FALSE),
+(8, 'path_to_jasmeen2.jpeg', FALSE),
+(8, 'path_to_jasmeen3.jpeg', FALSE),
+
+-- Product 9
+(9, 'path_to_red.jpg', TRUE),
+(9, 'path_to_red1.jpg', FALSE),
+(9, 'path_to_red2.jpg', FALSE),
+(9, 'path_to_red3.jpeg', FALSE),
+
+-- Product 10
+(10, 'path_to_roast.webp', TRUE),
+(10, 'path_to_roast1.jpeg', FALSE),
+(10, 'path_to_roast2.avif', FALSE),
+(10, 'path_to_roast3.avif', FALSE),
+
+-- Product 11
+(11, 'path_to_kona.webp', TRUE),
+(11, 'path_to_kona1.jpg', FALSE),
+(11, 'path_to_kona2.webp', FALSE),
+(11, 'path_to_kona3.jpg', FALSE),
+
+-- Product 12
+(12, 'path_to_espresso.webp', TRUE),
+(12, 'path_to_espresso1.webp', FALSE),
+(12, 'path_to_espresso2.webp', FALSE),
+(12, 'path_to_espresso3.webp', FALSE),
+
+-- Product 13
+(13, 'path_to_breakfastblend.jpg', TRUE),
+(13, 'path_to_breakdfastblend1.jpg', FALSE),
+(13, 'path_to_breakdfastblend2.jpg', FALSE),
+(13, 'path_to_breakdfastblend3.jpg', FALSE);
+
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+}
+
+ul {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.btn {
+    display: inline-block;
+    background-color: #4a6741;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #3a5233;
+}
+
+/* Header Styles */
+header {
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.logo a {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #4a6741;
+}
+
+.logo img {
+    height: 100px;
+    margin-right: 10px;
+}
+
+nav ul {
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #4a6741;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.search-bar {
+    position: relative;
+    margin-right: 20px;
+}
+
+.search-bar input {
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 250px;
+}
+
+.search-bar button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.cart {
+    margin-right: 20px;
+    position: relative;
+}
+
+.cart i {
+    font-size: 20px;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #4a6741;
+    color: white;
+    font-size: 12px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-account a {
+    font-weight: 500;
+}
+
+.mobile-menu-toggle {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Hero Slider Styles */
+.hero-slider {
+    position: relative;
+    overflow: hidden;
+    height: 500px;
+    width: 100%;
+}
+
+.slider-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.slider-wrapper {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    height: 100%;
+}
+
+.slide {
+    min-width: 100%;
+    position: relative;
+    height: 100%;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slide-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+}
+
+.slide-content h2 {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+.slide-content p {
+    font-size: 18px;
+    margin-bottom: 25px;
+    max-width: 600px;
+}
+
+/* Button Styles */
+.btn {
+    background-color: #ff6600;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background-color: #e55b00;
+}
+
+/* Products Section Styles */
+.products-section {
+    padding: 50px 0;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.section-header h2 {
+    font-size: 28px;
+    color: #333;
+}
+
+.view-all {
+    color: #4a6741;
+    font-weight: 500;
+}
+
+.products-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.product-card {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-card a {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.product-image {
+    width: 240px;
+    height: 180px;
+    flex-shrink: 0;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-info {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-name {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.product-rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.product-rating i {
+    color: #f8c43a;
+    margin-right: 2px;
+}
+
+.product-rating span {
+    margin-left: 5px;
+    color: #777;
+    font-size: 14px;
+}
+
+.product-description {
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4a6741;
+}
+
+.add-to-cart-btn {
+    background-color: #4a6741;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #3a5233;
+}
+
+/* Product Detail Page Styles */
+.breadcrumb {
+    margin: 20px 0;
+    font-size: 14px;
+    color: #777;
+}
+
+.breadcrumb a {
+    color: #4a6741;
+}
+
+.product-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+@media (min-width: 768px) {
+    .product-detail {
+        flex-direction: row;
+    }
+}
+
+.product-images {
+    flex: 1;
+}
+
+.main-image {
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.main-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.thumbnail-images {
+    display: flex;
+    gap: 10px;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.thumbnail:hover {
+    border-color: #4a6741;
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-info-detail {
+    flex: 1;
+}
+
+.product-info-detail h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.product-quantity {
+    margin: 20px 0;
+}
+
+.product-quantity select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+.product-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.wishlist-btn {
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.wishlist-btn:hover {
+    background-color: #f5f5f5;
+}
+
+.product-tabs {
+    margin-top: 30px;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.tab-btn.active {
+    border-bottom-color: #4a6741;
+    color: #4a6741;
+}
+
+.tab-content {
+    padding: 20px 0;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.tab-pane h4 {
+    margin: 15px 0 5px;
+    font-size: 18px;
+}
+
+.tab-pane p, .tab-pane li {
+    margin-bottom: 10px;
+}
+
+.tab-pane ol, .tab-pane ul {
+    margin-left: 20px;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #333;
+    color: white;
+    padding: 50px 0 20px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+@media (min-width: 768px) {
+    .footer-content {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.footer-column h3 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.footer-column ul li {
+    margin-bottom: 10px;
+}
+
+.footer-column ul li a {
+    color: #ccc;
+    transition: color 0.3s ease;
+}
+
+.footer-column ul li a:hover {
+    color: white;
+}
+
+.newsletter p {
+    color: #ccc;
+    margin-bottom: 15px;
+}
+
+.newsletter form {
+    display: flex;
+    gap: 10px;
+}
+
+.newsletter input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+}
+
+.footer-bottom {
+    margin-top: 40px;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+    color: #ccc;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .search-bar input {
+        width: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    nav, .search-bar {
+        display: none;
+    }
+    
+    .mobile-menu-toggle {
+        display: block;
+    }
+    
+    .product-card a {
+        flex-direction: column;
+    }
+    
+    .product-image {
+        width: 100%;
+        height: 200px;
+    }
+    
+    .hero-slider {
+        height: 400px;
+    }
+    
+    .slide-content h2 {
+        font-size: 28px;
+    }
+    
+    .slide-content p {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-slider {
+        height: 300px;
+    }
+    
+    .slide-content h2 {
+        font-size: 24px;
+    }
+    
+    .product-actions {
+        flex-direction: column;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+<!--  index.php final  -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeaCoffee - Premium Tea and Coffee Shop</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <style>body {
+    font-family: 'Segoe UI', sans-serif;
+    color: #4B3C31;  /* Charcoal Brown */
+    background-color: #C8E6C9;  /* Light Mint Green */
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+a {
+    text-decoration: none;
+    color: #2C6B48;  /* Forest Green */
+}
+
+.btn {
+    display: inline-block;
+    background-color: #2C6B48;  /* Forest Green */
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #4A7C49;  /* Moss Green */
+}
+
+header {
+    background-color: #556B2F; /* Muted Olive Green */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+header .logo a {
+    color: #F5F5DC; /* Light Beige for the logo text */
+}
+
+header nav ul li a {
+    color: #F5F5DC; /* Light Beige for navigation links */
+}
+
+header .search-bar input {
+    border: 1px solid #F5F5DC; /* Light Beige border for the search bar */
+}
+
+header .search-bar button {
+    color: #F5F5DC; /* Light Beige for search button text */
+}
+
+/* Cart Icon Color */
+header .cart i {
+    color: #A9D08E; /* Soft Light Green for the cart icon */
+}
+
+header .cart i:hover {
+    color: #F5F5DC; /* Light Beige when hovering over the cart icon */
+}
+
+/* Cart Count Color */
+header .cart-count {
+    background-color: #A9D08E; /* Soft Light Green for the cart count bubble */
+}
+
+/* Sign-In Link Color */
+header .user-account a {
+    color: #A9D08E; /* Soft Light Green for the sign-in link */
+}
+
+header .user-account a:hover {
+    color: #F5F5DC; /* Light Beige when hovering over the sign-in link */
+}
+
+
+
+.hero-slider {
+    background-color: #C8E6C9;  /* Light Mint Green */
+}
+</style>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.php">
+                        <img  src="logo2.jpg" alt="TeaCoffee Logo">
+                        <span>Steamy Cup </span>
+                    </a>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.php">Home</a></li>
+                        <li><a href="#tea">Tea</a></li>
+                        <li><a href="#coffee">Coffee</a></li>
+                        <li><a href="#accessories">Accessories</a></li>
+                        <li><a href="#gifts">Gift Sets</a></li>
+                    </ul>
+                </nav>
+                <div class="header-right">
+                    <div class="search-bar">
+                        <input  type="text" placeholder="Search products...">
+                        <button><i class="fas fa-search"></i></button>
+                    </div>
+                    <div class="cart">
+                        <a href="cart.php">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count">3</span>
+                        </a>
+                    </div>
+                    <div class="user-account">
+                        <a href="login.php">Sign In</a>
+                    </div>
+                </div>
+                <div class="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Slider Section -->
+        <section class="hero-slider">
+    <div class="slider-container">
+        <div class="slider-wrapper">
+            <div class="slide">
+                <img src="images/black-coffee.jpg" alt="Premium Tea Collection">
+                <div class="slide-content">
+                    <h2>Premium Tea Collection</h2>
+                    <p>Discover our handpicked selection of the finest teas from around the world</p>
+                    <a href="#tea" class="btn">Shop Tea</a>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="images/latte.jpg" alt="Artisan Coffee Beans">
+                <div class="slide-content">
+                    <h2>Artisan Coffee Beans</h2>
+                    <p>Ethically sourced, freshly roasted coffee beans for the perfect brew</p>
+                    <a href="#coffee" class="btn">Shop Coffee</a>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="images/ginger-tea.png" alt="Exclusive Gift Sets">
+                <div class="slide-content">
+                    <h2>Exclusive Gift Sets</h2>
+                    <p>Curated gift sets for tea and coffee lovers</p>
+                    <a href="#gifts" class="btn">Shop Gifts</a>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="images/herbal-tea.jpg" alt="Brewing Accessories">
+                <div class="slide-content">
+                    <h2>Brewing Accessories</h2>
+                    <p>Everything you need to brew the perfect cup</p>
+                    <a href="#accessories" class="btn">Shop Accessories</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="script.js"></script>
+
+        <!-- Featured Products Section -->
+        <section class="products-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Featured Products</h2>
+                    <a href="products.php?category=featured" class="view-all">View all</a>
+                </div>
+                <div class="products-grid">
+                    <?php
+                    // In a real application, you would fetch this data from a database
+                    $featuredProducts = [
+                        [
+                            'id' => 1,
+                            'name' => 'Premium Assam Black Tea',
+                            'description' => 'Rich and malty black tea from the Assam region of India',
+                            'price' => 12.99,
+                            'rating' => 4.5,
+                            'image' => 'images/Assam.webp'
+                        ],
+                        [
+                            'id' => 2,
+                            'name' => 'Ethiopian Yirgacheffe Coffee',
+                            'description' => 'Bright, fruity coffee with notes of citrus and chocolate',
+                            'price' => 15.99,
+                            'rating' => 4.8,
+                            'image' => 'images/yirga.jpeg'
+                        ],
+                        [
+                            'id' => 3,
+                            'name' => 'Japanese Matcha Green Tea',
+                            'description' => 'Ceremonial grade matcha powder for traditional preparation',
+                            'price' => 24.99,
+                            'rating' => 4.7,
+                            'image' => 'images/green-tea.jpg'
+                        ],
+                        [
+                            'id' => 4,
+                            'name' => 'Colombian Supremo Coffee',
+                            'description' => 'Well-balanced coffee with caramel sweetness and nutty undertones',
+                            'price' => 14.99,
+                            'rating' => 4.6,
+                            'image' => 'images/colobium.webp'
+                        ],
+                        [
+                            'id' => 5,
+                            'name' => 'Darjeeling First Flush Tea',
+                            'description' => 'Light and floral black tea from the foothills of the Himalayas',
+                            'price' => 18.99,
+                            'rating' => 4.9,
+                            'image' => 'images/darjleeng.jpg'
+                        ]
+                    ];
+
+                    foreach ($featuredProducts as $product) {
+                        include 'product-card.php';
+                    }
+                    ?>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tea Collection Section -->
+        <section id="tea" class="products-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Tea Collection</h2>
+                    <a href="products.php?category=tea" class="view-all">View all</a>
+                </div>
+                <div class="products-grid">
+                    <?php
+                    // In a real application, you would fetch this data from a database
+                    $teaProducts = [
+                        [
+                            'id' => 6,
+                            'name' => 'Earl Grey Tea',
+                            'description' => 'Classic black tea infused with bergamot oil',
+                            'price' => 10.99,
+                            'rating' => 4.3,
+                            'image' => 'images/earl.avif'
+                        ],
+                        [
+                            'id' => 7,
+                            'name' => 'Chamomile Herbal Tea',
+                            'description' => 'Soothing herbal infusion with apple-like flavor',
+                            'price' => 9.99,
+                            'rating' => 4.4,
+                            'image' => 'images/herbal-tea.jpg'
+                        ],
+                        [
+                            'id' => 8,
+                            'name' => 'Jasmine Green Tea',
+                            'description' => 'Green tea scented with jasmine blossoms',
+                            'price' => 11.99,
+                            'rating' => 4.6,
+                            'image' => 'images/jasmeen1.jpg'
+                        ],
+                        [
+                            'id' => 9,
+                            'name' => 'Rooibos Red Tea',
+                            'description' => 'Caffeine-free herbal tea from South Africa',
+                            'price' => 8.99,
+                            'rating' => 4.2,
+                            'image' => 'images/red.jpg'
+                        ]
+                    ];
+
+                    foreach ($teaProducts as $product) {
+                        include 'product-card.php';
+                    }
+                    ?>
+                </div>
+            </div>
+        </section>
+
+        <!-- Coffee Collection Section -->
+        <section id="coffee" class="products-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Coffee Collection</h2>
+                    <a href="products.php?category=coffee" class="view-all">View all</a>
+                </div>
+                <div class="products-grid">
+                    <?php
+                    // In a real application, you would fetch this data from a database
+                    $coffeeProducts = [
+                        [
+                            'id' => 10,
+                            'name' => 'French Roast Coffee',
+                            'description' => 'Dark roast coffee with smoky, intense flavor',
+                            'price' => 13.99,
+                            'rating' => 4.5,
+                            'image' => 'images/roast.webp'
+                        ],
+                        [
+                            'id' => 11,
+                            'name' => 'Kona Coffee',
+                            'description' => 'Premium coffee grown on the slopes of Hualalai in Hawaii',
+                            'price' => 29.99,
+                            'rating' => 4.9,
+                            'image' => 'images/kona.webp'
+                        ],
+                        [
+                            'id' => 12,
+                            'name' => 'Espresso Blend',
+                            'description' => 'Bold, rich blend perfect for espresso machines',
+                            'price' => 16.99,
+                            'rating' => 4.7,
+                            'image' => 'images/espresso.webp'
+                        ],
+                        [
+                            'id' => 13,
+                            'name' => 'Decaf Breakfast Blend',
+                            'description' => 'Smooth, caffeine-free medium roast coffee',
+                            'price' => 12.99,
+                            'rating' => 4.1,
+                            'image' => 'images/breakfastblend.jpg'
+                        ]
+                    ];
+
+                    foreach ($coffeeProducts as $product) {
+                        include 'product-card.php';
+                    }
+                    ?>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Shop</h3>
+                    <ul>
+                        <li><a href="#tea">Tea</a></li>
+                        <li><a href="#coffee">Coffee</a></li>
+                        <li><a href="#accessories">Accessories</a></li>
+                        <li><a href="#gifts">Gift Sets</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="about.php">About Us</a></li>
+                        <li><a href="careers.php">Careers</a></li>
+                        <li><a href="press.php">Press</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="contact.php">Contact Us</a></li>
+                        <li><a href="faq.php">FAQs</a></li>
+                        <li><a href="shipping.php">Shipping & Returns</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column newsletter">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to our newsletter for the latest products and offers.</p>
+                    <form action="subscribe.php" method="post">
+                        <input type="email" name="email" placeholder="Email" required>
+                        <button type="submit" class="btn">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 TeaCoffee. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
+-- Product 14
+INSERT INTO product_images (product_id, image_path, is_primary) VALUES
+(14, 'images/deluxea.webp', TRUE),
+(14, 'images/deluxe1.jpg', FALSE),
+(14, 'images/deluxe2.webp', FALSE),
+(14, 'images/deluxe3.webp', FALSE);
+
+-- Product 15
+INSERT INTO product_images (product_id, image_path, is_primary) VALUES
+(15, 'images/coffeelover.jpg', TRUE),
+(15, 'images/coffeelover1.webp', FALSE),
+(15, 'images/coffeelover2.jpg', FALSE),
+(15, 'images/coffeelover3.jpg', FALSE);
+
+-- Product 16
+INSERT INTO product_images (product_id, image_path, is_primary) VALUES
+(16, 'images/basket.jpeg', TRUE),
+(16, 'images/basket1.webp', FALSE),
+(16, 'images/basket2.jpg', FALSE),
+(16, 'images/basket3.jpg', FALSE);
+
+-- Product 17
+INSERT INTO product_images (product_id, image_path, is_primary) VALUES
+(17, 'images/matchaset.jpg', TRUE),
+(17, 'images/matchaset1.avif', FALSE),
+(17, 'images/matchaset2.webp', FALSE),
+(17, 'images/matchaset3.webp', FALSE);
+
+-- Product 18
+INSERT INTO product_images (product_id, image_path, is_primary) VALUES
+(18, 'images/coffeesub.jpg', TRUE),
+(18, 'images/coffeesub1.jpeg', FALSE),
+(18, 'images/coffeesub2.webp', FALSE),
+(18, 'images/coffeesub3.jpg', FALSE);
+
+-- Product 19
+INSERT INTO product_images (product_id, image_path, is_primary) VALUES
+(19, 'images/coffeedipper.webp', TRUE),
+(19, 'images/coffeedipper1.jpg', FALSE),
+(19, 'images/coffeedipper2.webp', FALSE),
+(19, 'images/coffeedipper3.webp', FALSE);
+
+-- Product 20
+INSERT INTO product_images (product_id, image_path, is_primary) VALUES
+(20, 'images/glassinfuser.webp', TRUE),
+(20, 'images/glassinfuser1.webp', FALSE),
+(20, 'images/glassinfuser2.jpg', FALSE),
+(20, 'images/glassinfuser3.jpg', FALSE);
+
+-- Product 21
+INSERT INTO product_images (product_id, image_path, is_primary) VALUES
+(21, 'images/kettle.webp', TRUE),
+(21, 'images/kettle1.jpg', FALSE),
+(21, 'images/kettle2.webp', FALSE),
+(21, 'images/kettle3.webp', FALSE);
+
+-- Product 22
+INSERT INTO product_images (product_id, image_path, is_primary) VALUES
+(22, 'images/steelinfuser.jpg', TRUE),
+(22, 'images/steelinfuser2.jpg', FALSE),
+(22, 'images/steelinfuser.jpg', FALSE),
+(22, 'images/steelinfuser1.avif', FALSE);
+
+-- Product 23
+INSERT INTO product_images (product_id, image_path, is_primary) VALUES
+(23, 'images/bean.webp', TRUE),
+(23, 'images/bean1.jpeg', FALSE),
+(23, 'images/bean2.webp', FALSE),
+(23, 'images/bean3.jpg', FALSE);
+
+-- Product details for gifts and accessories (14-23)
+INSERT INTO product_details (product_id, details, instructions, origin, ingredients) VALUES
+-- Deluxe Tea Gift Box (14)
+(14, 'A premium collection of 5 hand-selected loose leaf teas, beautifully packaged in an elegant gift box. 
+Each tea is carefully chosen to represent different regions and flavors.
+The set includes a variety of black, green, and herbal teas to suit different tastes.
+Perfect for both tea connoisseurs and those new to specialty teas.
+Comes with a detailed brewing guide and tasting notes for each tea.
+Makes an excellent gift for any tea lover.', 
+'1. Each tea comes in a resealable pouch to maintain freshness
+2. Store in a cool, dry place away from direct sunlight
+3. Use 1 teaspoon per cup, steep for 3-5 minutes
+4. Perfect for gifting or personal enjoyment
+5. Includes brewing guide and tasting notes', 
+'Various regions', 
+'Contains: Assam Black Tea, Darjeeling First Flush, Earl Grey, Jasmine Green Tea, Rooibos Red Tea'),
+
+-- Coffee Lovers Gift Set (15)
+(15, 'A curated selection of 3 specialty coffees with a stylish mug and brewing guide.
+Each coffee is sourced from renowned coffee-growing regions and roasted to perfection.
+The set includes a premium ceramic mug with a comfortable handle and elegant design.
+Comes with a comprehensive brewing guide for each coffee variety.
+Perfect for coffee enthusiasts who appreciate different flavor profiles.
+Makes an excellent gift for any coffee lover.', 
+'1. Each coffee is vacuum-sealed for maximum freshness
+2. Grind beans just before brewing for best flavor
+3. Use 2 tablespoons of ground coffee per 6 oz of water
+4. Includes detailed brewing instructions for each coffee
+5. Perfect for coffee enthusiasts', 
+'Various regions', 
+'Contains: Ethiopian Yirgacheffe, Colombian Supremo, French Roast'),
+
+-- Tea & Biscuits Gift Basket (16)
+(16, 'A charming gift basket with assorted teas and gourmet biscuits.
+Features a selection of premium teas and handcrafted biscuits.
+Perfect for afternoon tea gatherings or as a thoughtful gift.
+The basket includes a variety of tea flavors to suit different preferences.
+Comes with elegant packaging and serving suggestions.
+Ideal for sharing with friends and family.', 
+'1. Store teas in airtight containers
+2. Keep biscuits in a cool, dry place
+3. Best consumed within 3 months of purchase
+4. Perfect for afternoon tea gatherings
+5. Includes serving suggestions', 
+'Various regions', 
+'Contains: Earl Grey Tea, Chamomile Tea, Assorted Gourmet Biscuits'),
+
+-- Matcha Ceremony Set (17)
+(17, 'Traditional Japanese matcha set with bowl, whisk, and premium matcha powder.
+Experience the authentic Japanese tea ceremony with this complete set.
+Includes a handcrafted ceramic bowl and bamboo whisk.
+Comes with ceremonial grade matcha powder for authentic flavor.
+Perfect for those interested in Japanese tea culture.
+Makes a beautiful addition to any tea collection.', 
+'1. Sift 1-2 teaspoons of matcha powder into bowl
+2. Add 2-3 oz of hot water (175°F/80°C)
+3. Whisk in a "W" or "M" motion until frothy
+4. Clean whisk immediately after use
+5. Store matcha in airtight container in refrigerator', 
+'Japan', 
+'Ceremonial grade matcha powder'),
+
+-- Coffee Subscription Box (18)
+(18, 'A 3-month subscription of premium coffee delivered monthly.
+Each delivery includes freshly roasted coffee from different regions.
+Experience new flavors and brewing methods with each shipment.
+Includes detailed tasting notes and brewing recommendations.
+Perfect for coffee enthusiasts who love variety.
+Makes a great gift for any coffee lover.', 
+'1. Each delivery includes freshly roasted coffee
+2. Store beans in airtight container away from light
+3. Grind beans just before brewing
+4. Follow brewing guide included with each delivery
+5. Contact customer service for subscription management', 
+'Various regions', 
+'Premium Arabica coffee beans'),
+
+-- Ceramic Pour-Over Coffee Dripper (19)
+(19, 'Elegant ceramic pour-over coffee maker for a perfect brew every time.
+Handcrafted with high-quality ceramic material for optimal heat retention.
+Features a unique design for even water distribution.
+Perfect for single-serve coffee brewing.
+Comes with a reusable metal filter for eco-friendly use.
+Makes a beautiful addition to any coffee setup.', 
+'1. Place filter in dripper and rinse with hot water
+2. Add ground coffee (medium-fine grind)
+3. Pour hot water (195-205°F) in circular motion
+4. Allow coffee to drip through completely
+5. Clean with warm water after each use', 
+'Japan', 
+'High-quality ceramic material'),
+
+-- Glass Teapot with Infuser (20)
+(20, 'Beautiful heat-resistant glass teapot with removable stainless steel infuser.
+Perfect for brewing loose leaf teas and watching the leaves unfurl.
+Features a comfortable handle and drip-free spout.
+The removable infuser makes cleaning easy.
+Ideal for brewing all types of tea.
+Makes a beautiful centerpiece for any tea time.', 
+'1. Fill infuser with loose leaf tea
+2. Add hot water (temperature varies by tea type)
+3. Steep for recommended time
+4. Remove infuser when desired strength is reached
+5. Hand wash with mild detergent', 
+'China', 
+'Borosilicate glass, stainless steel'),
+
+-- Electric Gooseneck Kettle (21)
+(21, 'Precision electric kettle with temperature control for perfect brewing.
+Features a gooseneck spout for precise pouring.
+Multiple temperature settings for different types of tea and coffee.
+Quick heating with automatic shut-off for safety.
+Sleek stainless steel design with easy-to-read display.
+Perfect for pour-over coffee and specialty teas.', 
+'1. Fill with clean, filtered water
+2. Select desired temperature (varies by tea/coffee type)
+3. Wait for water to reach temperature
+4. Pour slowly for controlled extraction
+5. Clean regularly to prevent mineral buildup', 
+'China', 
+'Stainless steel, electronic components'),
+
+-- Stainless Steel Tea Infuser (22)
+(22, 'High-quality mesh tea infuser for loose leaf tea.
+Made from food-grade stainless steel for durability.
+Features a fine mesh for optimal tea brewing.
+Easy to clean and maintain.
+Perfect for single-serve tea brewing.
+Comes with a convenient chain for easy removal.', 
+'1. Fill infuser with loose leaf tea
+2. Place in cup or teapot
+3. Add hot water and steep
+4. Remove infuser when desired strength is reached
+5. Rinse and dry after each use', 
+'China', 
+'Food-grade stainless steel'),
+
+-- Coffee Bean Grinder (23)
+(23, 'Adjustable burr grinder for the perfect coffee grind.
+Features multiple grind settings for different brewing methods.
+Consistent particle size for optimal extraction.
+Durable stainless steel burrs for long-lasting performance.
+Quiet operation with minimal static.
+Perfect for coffee enthusiasts who value fresh grinding.', 
+'1. Select grind size based on brewing method
+2. Add coffee beans to hopper
+3. Grind only what you need for immediate use
+4. Clean regularly to maintain performance
+5. Store in dry place when not in use', 
+'Germany', 
+'Stainless steel burrs, motor components');
